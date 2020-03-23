@@ -20,6 +20,7 @@ class CreateExamsTable extends Migration
             $table->integer("qCount");
             $table->string("beginHour");
             $table->string("endHour");
+            $table->string("checkExam");
             $table->timestamp("beginDate")->nullable();
             $table->timestamp("endDate")->nullable();
             $table->date("examDate")->nullable();

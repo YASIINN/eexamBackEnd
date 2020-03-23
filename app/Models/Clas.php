@@ -11,4 +11,11 @@ class Clas extends Model
     {
         return $this->belongsToMany(School::class, "school_class_branch_pivots", "class_id", "school_id");
     }
+
+    //adem
+    public function branches()
+    {
+        return $this->belongsToMany(Branch::class, "school_class_branch_pivots", "class_id", "branch_id");
+    }
+    //adem
 }

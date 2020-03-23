@@ -22,6 +22,24 @@ Route::get("/file", "FileController@index");
 Route::post("user/import", "UserController@import");
 Route::post("user/upload", "UserController@upload");
 Route::post("test", "TestController@test");
+Route::post("testt", "TestController@testt");
+Route::get("test", "TestController@index");
+Route::get("scblists", "SchoolClassBranchPivotController@index");
+
+//exam
+Route::post("examcreate", "ExamController@store");
+Route::post("exampartialcreate", "ExamPartialController@store");
+Route::post("exampartials", "ExamPartialController@getPartialLists");
+Route::delete("delexampartial/{id}", "ExamPartialController@destroy");
+Route::post("saveExamFile", "FileController@saveExamFile");
+Route::post("filedownload", "FileController@fileDownload");
+Route::post("examgroupfilecreate", "ExamGroupController@store");
+Route::delete("delexamgroupfile/{id}", "ExamGroupController@destroy");
+
+
+
+
+//exam
 
 
 /*Yasin*/

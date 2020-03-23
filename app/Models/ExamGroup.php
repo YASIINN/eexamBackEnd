@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExamGroup extends Model
 {
+    public function file()
+    {
+        return $this->belongsTo(File::class);
+    }
     public function groups()
     {
         return $this->belongsTo(Group::class, "group_id", "id");
@@ -23,6 +27,5 @@ class ExamGroup extends Model
 
     public  function files(){
         return $this->belongsTo(File::class, "file_id", "id");
-
     }
 }
