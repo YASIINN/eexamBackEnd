@@ -34,7 +34,7 @@ class OptionController extends Controller
     public function index(Request $request)
     {
         try {
-            return Option::all();
+            return Option::where([['name','!=','-']])->get();
         } catch (\Exception $e) {
             return response()->json($e, 500);
         }

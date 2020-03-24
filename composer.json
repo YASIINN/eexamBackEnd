@@ -13,7 +13,8 @@
         "fruitcake/laravel-cors": "^1.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
-        "maatwebsite/excel": "^3.1"
+        "maatwebsite/excel": "^3.1",
+        "rbdwllr/reallysimplejwt": "^3.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

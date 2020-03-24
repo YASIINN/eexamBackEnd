@@ -6,8 +6,9 @@ use App\Models\File;
 use Illuminate\Http\Request;
 use Validator;
 use Storage;
-use App\Models\File;
 use Illuminate\Http\Response;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FileController extends Controller
 {
@@ -16,6 +17,14 @@ class FileController extends Controller
     }
     public function excellUpload(Request $request){
 
+    }
+    public function userImport(Request $request){
+       try {
+           Excel::import(new UsersImport, $request->file("file"));
+           return response()->json(["message"=>"Başarılı"]);
+        } catch (\Throwable $th) {
+            return response()->json(["message"=>$th->getMessage()]);
+        }
     }
     public  function  index(){
         return File::all();

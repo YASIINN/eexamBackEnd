@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class ExamPartialController extends Controller
 {
     public function getPartialLists(Request $request){
-        $partials = ExamPartial::with("chapter")->where("exam_id", $request->exam_id)->get();
+        $partials = ExamPartial::with("chapter")->where("exam_id", $request->id)->get();
         return $partials;
     }
     public function store(Request $request){

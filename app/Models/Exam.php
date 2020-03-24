@@ -8,7 +8,7 @@ class Exam extends Model
 {
     public function examgroup()
     {
-        return $this->hasMany(ExamGroup::class)->with(['groups', 'files','examcontent','question']);
+        return $this->hasMany(ExamGroup::class)->with(['groups', 'files','examcontent','question','examgroupuser']);
     }
 
 
@@ -44,5 +44,16 @@ class Exam extends Model
     {
         return $this->belongsTo(Branch::class, "branch_id", "id");
     }
+
+      //adem
+      public function groups()
+      {
+          return $this->belongsToMany(Group::class, "exam_groups", "exam_id", "group_id");
+      }
+      public function partials()
+      {
+          return $this->belongsToMany(Chapter::class, "exam_partials", "exam_id", "chapter_id");
+      }
+      //adem
 
 }

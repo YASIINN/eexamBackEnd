@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get("/file", "FileController@index");
 
-Route::post("user/import", "UserController@import");
+Route::post("user/import", "FileController@userImport");
 Route::post("user/upload", "UserController@upload");
 Route::post("test", "TestController@test");
 Route::post("testt", "TestController@testt");
@@ -28,16 +28,20 @@ Route::get("scblists", "SchoolClassBranchPivotController@index");
 
 //exam
 Route::post("examcreate", "ExamController@store");
+Route::post("exams", "ExamController@getExams");
 Route::post("exampartialcreate", "ExamPartialController@store");
+
+
+Route::post("examgroupfilelists", "ExamGroupController@getGroupFileLists");
 Route::post("exampartials", "ExamPartialController@getPartialLists");
 Route::delete("delexampartial/{id}", "ExamPartialController@destroy");
 Route::post("saveExamFile", "FileController@saveExamFile");
 Route::post("filedownload", "FileController@fileDownload");
 Route::post("examgroupfilecreate", "ExamGroupController@store");
 Route::delete("delexamgroupfile/{id}", "ExamGroupController@destroy");
+Route::post("examstudents", "ExamController@getExamStudents");
 
-
-
+Route::post("createexamusergroup", "ExamgroupUserController@store");
 
 //exam
 
@@ -45,8 +49,9 @@ Route::delete("delexamgroupfile/{id}", "ExamGroupController@destroy");
 /*Yasin*/
 Route::post("/getStudentUnitExam", "ExamController@getStudentUnitExam");
 Route::post("/getStudentExam", "ExamController@getStudentExam");
-Route::get("/exam/{id}", "ExamController@index");
+Route::post("/exam", "ExamController@index");
 Route::post("/checkExamDate", "ExamController@dateTimeControl");
+Route::post("/createStudentExam", "ExamController@createstudentexam");
 
 Route::post("/lesson", "LessonController@store");
 Route::delete("/lesson/{id}", "LessonController@destroy");
@@ -94,7 +99,10 @@ Route::post("/getSCB", "SchoolController@getSCB");
 Route::post("/addSCB", "SchoolController@addSCB");
 Route::post("/deleteSCB", "SchoolController@delSCB");
 
-
+Route::get("/persons", "UserController@getpersons");
+Route::put("/persons/{id}", "UserController@updatepersons");
+Route::delete("/persons/{id}", "UserController@deleteperson");
+Route::post("/addperson", "UserController@addpersons");
 Route::post("/student", "UserController@store");
 Route::get("/student", "UserController@index");
 Route::delete("/student/{id}", "UserController@destroy");

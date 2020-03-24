@@ -10,9 +10,21 @@ use Illuminate\Http\Request;
 use App\Models\Question;
 class ExamGroupController extends Controller
 {
-    public function getPartialLists(Request $request){
-        $partials = ExamPartial::with("chapter")->where("exam_id", $request->exam_id)->get();
-        return $partials;
+    public function getGroupFileLists(Request $request){
+        $egs = ExamGroup::with(["groups", "exam", "file"])->where("exam_id", $request->id)->get();
+        $datas = [];
+        foreach ($egs as $key => $eg) {
+             $d = [
+                "id"=>$eg->id,
+                "file_id"=>$eg["file"]->id,
+                "file_path"=>$eg["file"]->path,
+                "exam_id"=>$eg["exam"]->id,
+                "group_id"=>$eg["groups"]->id,
+                "group_name"=>$eg["groups"]->name
+             ];
+             array_push($datas, $d);
+        }
+        return $datas;
     }
     public function store(Request $request){
         $valid = Validator::make($request->all(), [

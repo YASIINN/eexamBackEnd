@@ -10,6 +10,12 @@ class ExamGroup extends Model
     {
         return $this->belongsTo(File::class);
     }
+
+    public  function examgroupuser(){
+        return $this->belongsToMany(User::class, "examgroup_user", "exam_group_id", "user_id");
+
+    }
+
     public function groups()
     {
         return $this->belongsTo(Group::class, "group_id", "id");
@@ -28,4 +34,15 @@ class ExamGroup extends Model
     public  function files(){
         return $this->belongsTo(File::class, "file_id", "id");
     }
+    public function exam()
+    {
+        return $this->belongsTo(Exam::class);
+    }
+
+
+    //adem
+    public  function contents(){
+        return $this->hasMany(ExamContent::class,"exam_group_id","id")->with(['question', "option", "user"]);
+    }
+    //adem
 }

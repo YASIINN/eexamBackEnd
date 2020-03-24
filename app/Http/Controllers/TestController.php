@@ -7,19 +7,48 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use App\Models\School;
+use App\Models\ExamContent;
+use App\Models\ExamGroup;
 use App\Models\Branch;
 use App\Models\File;
+use App\Models\User;
 class TestController extends Controller
 {
     public function testt(Request $request){
-        $file = File::findOrFail(26);
-        $dilimler = explode("storage/", $file->path);
-        $dpath = 'app/public/'.$dilimler[1];
 
-        return response()->download(storage_path($dpath));
+        $user = User::with(["examcontents","examgroups", "exampartials"])->has("examcontents")
+        ->whereHas("examgroups", function($q){
+            $q->where("exam_id", 65);
+        })
+        ->whereHas("exampartials", function($q){
+            $q->where("exam_id", 65);
+        })
+        ->get();
+        return $user;
+
+        $eg = ExamGroup::with(["contents"])->where("exam_id", 65)->get()->groupBy("contents.user.id");
+        return $eg;
+
+
+
+        // $questions = Question::where("exam_group_id", 51)->get();
+        // $options = [1,2,3,4,5,6];
+        // foreach ($questions as $key => $q) {
+        //     $collection = collect($options);
+        //     $shuffled = $collection->shuffle();
+        //     $options = $shuffled->all();
+        //     $ec = new ExamContent();
+        //     $ec->question_id = $q->id;
+        //     $ec->user_id = 513;
+        //     $ec->option_id = $options[0];
+        //     $ec->exam_group_id = 51;
+        //     $ec->save();
+        // }
+        // return $questions;
     }
     public function index()
     {
+    
         $groups = ["A", "B", "C", "D"];
         $students = ["Adem", "ahmet", "ali", "yasin", "Bülent", "Mustafa", "Özge", "deniz","Elif"];
         $tam = floor(count($students) / count($groups));
