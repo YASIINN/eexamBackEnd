@@ -99,6 +99,7 @@ Route::post("/getSCB", "SchoolController@getSCB");
 Route::post("/addSCB", "SchoolController@addSCB");
 Route::post("/deleteSCB", "SchoolController@delSCB");
 
+Route::post("/changepass", "UserController@changePassword");
 Route::get("/persons", "UserController@getpersons");
 Route::put("/persons/{id}", "UserController@updatepersons");
 Route::delete("/persons/{id}", "UserController@deleteperson");

@@ -15,6 +15,31 @@ use Validator;
 
 class UserController extends Controller
 {
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = User::where([
+                ['id', '=', $request->userid],
+            ])->get();
+            if (count($user) > 0) {
+                if (Hash::check($request->old, $user[0]['password'])) {
+                    $updatePass = User::find($request->userid);
+                    $updatePass->password = Hash::make($request->new);
+                    if ($updatePass->update()) {
+                        return response()->json("Success", 200);
+                    } else {
+                    }
+                } else {
+                    return response()->json([], 204);
+                }
+            } else {
+                return response()->json([], 204);
+            }
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+
+        }
+    }
 
     public function login(Request $request)
     {

@@ -129,7 +129,9 @@ class SchoolController extends Controller
     public function index(Request $request)
     {
         try {
-            return School::all();
+            return School::where([
+                ['name',"!=",'-']
+            ])->get();
         } catch (\Exception $e) {
             return response()->json($e, 500);
         }
