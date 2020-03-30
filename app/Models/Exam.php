@@ -54,6 +54,14 @@ class Exam extends Model
       {
           return $this->belongsToMany(Chapter::class, "exam_partials", "exam_id", "chapter_id");
       }
+      public function files()
+      {
+          return $this->belongsToMany(File::class);
+      }
+      public function examgroups()
+      {
+          return $this->hasMany(ExamGroup::class)->with(['examgroupuser', "groups", "examcontent"]);
+      }
       //adem
 
 }

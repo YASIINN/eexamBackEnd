@@ -44,5 +44,8 @@ class ExamGroup extends Model
     public  function contents(){
         return $this->hasMany(ExamContent::class,"exam_group_id","id")->with(['question', "option", "user"]);
     }
+    public  function users(){
+        return $this->belongsToMany(User::class, "examgroup_user", "exam_group_id", "user_id");
+    }
     //adem
 }

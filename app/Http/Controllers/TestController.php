@@ -5,29 +5,113 @@ namespace App\Http\Controllers;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use App\Models\School;
 use App\Models\ExamContent;
+use App\Models\ExamPartial;
 use App\Models\ExamGroup;
 use App\Models\Branch;
 use App\Models\File;
 use App\Models\User;
+use App\Models\Exam;
+use App\Models\ExamgroupUser;
 class TestController extends Controller
 {
+
+    public function sortedQuestions($contents){
+        $collection = collect($contents);
+        $sorted = $collection->sortBy("question.qNo");
+        return $sorted->values()->all();
+    }
+
     public function testt(Request $request){
+        $file_name = "public/examdats/dat$request->id.dat";
+        $eps = ExamPartial::with("chapter")->where("exam_id", $request->id)->get();
+        $datas = [];
+       $users = User::with(["examcontents"])
+       ->has("examcontents")
+       ->with(['examgroups' => function ($query) use($request) {
+            $query->where('exam_id',$request["id"]);
+        }])->get();
+        foreach ($users as $key => $user) {
+            $answer = "";
+            $sortedQcontents = $this->sortedQuestions($user->examcontents);
+            foreach ($sortedQcontents as $key => $uec) {
+               if($uec->exam_group->exam_id === $request["id"]){
+                $opt = $uec->option->id === 6 ? " " : $uec->option->name;
+                $answer = $answer . $opt;
+               }
+            }
+            $d = [];
+            foreach ($eps as $key => $ep) {
+                $d[$ep->chapter->name]=substr($answer, $ep->startQ-1, ($ep->endQ - $ep->startQ)+1);
+            }
+            if($answer != ""){
+                $d = [
+                    "user"=>$user->tc,
+                    "group"=>$user->examgroups[0]->groups->name,
+                    "answer"=>$answer,
+                    "chapters"=>$d,
+                ];
+                array_push($datas, $d);
+            }
+        }
+        $bosluk = "-";
+        $line = "";
+        $results = [];
+        foreach ($datas as $key => $data) {
+             $chapterline = "";
+            foreach ($eps as $key1 => $ep) {
+                $chapterline = $chapterline . $data["chapters"][$ep->chapter->name] . $bosluk;
+            }
+            if ($key === 0) {
+             
+                $line = $data['user'] . $bosluk . $data["group"] . $bosluk . $chapterline;
+                array_push($results, $line);
+                //  Storage::put("$file_name", $line);
+            } else {
+                $line = $data['user'] . $bosluk . $data["group"] . $bosluk . $chapterline;
+                array_push($results, $line);
+                //  Storage::append("$file_name", $line);
+            }
 
-        $user = User::with(["examcontents","examgroups", "exampartials"])->has("examcontents")
-        ->whereHas("examgroups", function($q){
-            $q->where("exam_id", 65);
-        })
-        ->whereHas("exampartials", function($q){
-            $q->where("exam_id", 65);
-        })
-        ->get();
-        return $user;
+        }
+        foreach ($results as $k => $result) {
+            if ($k === 0) {
+               Storage::put("$file_name", $result);
+            } else {
+                Storage::append("$file_name", $result);
+            }
+        }
+        return $results;
+        return $line;
 
-        $eg = ExamGroup::with(["contents"])->where("exam_id", 65)->get()->groupBy("contents.user.id");
-        return $eg;
+        return $datas;
+        try {
+            $spath = Storage::url($file_name);
+            $file = new File();
+            $file->path = env("HOST_URL") . $spath;
+            if ($file->save()) {
+                 $ef = new ExamFile();
+                 $ef->exam_id = $request->id;
+                 $ef->file_id = $file->id;
+                 if($ef->save()){
+                    return response()->json($file, 201);
+                 } else {
+                    return response()->json(['message'=>"Dosya sınav ilişkisi kaydedilemedi."], 200);
+                 }
+                
+            } else {
+                return response()->json(['message'=>"Dosya kaydedilemedi."], 200);
+           }
+        } catch (\Throwable $th) {
+            return response()->json(["message"=>$th->getMessage()], 200);
+        }
+    }
+    public function contentAtamaTest(){
+                // $eg = ExamGroup::with(["contents"])->where("exam_id", 65)->get()->groupBy("contents.user.id");
+        // return $eg;
 
 
 
@@ -48,7 +132,7 @@ class TestController extends Controller
     }
     public function index()
     {
-    
+
         $groups = ["A", "B", "C", "D"];
         $students = ["Adem", "ahmet", "ali", "yasin", "Bülent", "Mustafa", "Özge", "deniz","Elif"];
         $tam = floor(count($students) / count($groups));

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\School;
 use App\Models\SchoolClassBranchPivot;
 use Illuminate\Http\Request;
+use App\Models\Clas;
+use App\Models\Branch;
+use Illuminate\Support\Facades\DB;
 use Validator;
 
 class SchoolController extends Controller
@@ -90,14 +93,63 @@ class SchoolController extends Controller
     public function getSCB(Request $request)
     {
         try {
-            $scb = School::with(['branch', 'clases'])->where("id", $request->schoolid)->has("branch")->has("clases")->get();
+
+
+//    $schools = School::with(['classes'])->where("id",$request->schoolid)->has("classes")->get();
+//         $scb = [];
+//         foreach ($schools as $key => $school) {
+//             $collection = collect($school->classes);
+//             $unique = $collection->unique('id');
+//             unset($school["classes"]);
+//             $school["classes"] = $unique->values()->all();
+//             foreach ($unique->values()->all() as $key => $class) {
+//                 $collectionclass = collect($class->branches);
+//                 $uniqueclass = $collectionclass->unique('id');
+//                 unset($class["branches"]);
+//                 $class["branches"] = $uniqueclass->values()->all();
+//             }
+//             array_push($scb, $school);
+//         }
+//         return $scb;
+
+
+            $data = DB::table('school_class_branch_pivots')
+                ->join('schools', 'schools.id', '=', 'school_class_branch_pivots.school_id')
+                ->join('classes', 'classes.id', '=', 'school_class_branch_pivots.class_id')
+                ->join('branches', 'branches.id', '=', 'school_class_branch_pivots.branch_id')
+                ->select("school_class_branch_pivots.*", "schools.*", "classes.*", "branches.*")
+                ->where([
+                    ['schools.id', '=', $request->schoolid],
+                ])
+                ->get();
+            $result = [];
+            foreach ($data as $key => $item) {
+                $schooldata = School::find($item->school_id);
+                $classdata = Clas::find($item->class_id);
+                $branchdata = Branch::find($item->branch_id);
+                array_push($result, [
+                    "schoolid" => $item->school_id,
+                    "classid" => $item->class_id,
+                    "branchid" => $item->branch_id,
+                    "schoolname" => $schooldata->name,
+                    "branchname" => $branchdata->name,
+                    "classname" => $classdata->name,
+                    "fullname"=>$classdata->name. " ".$branchdata->name
+
+                ]);
+
+                # code...
+            }
+            // return $data;
+            return $result;
+            $scb = School::with(['clases'])->where("id", $request->schoolid)->has("clases")->get();
             if (count($scb) > 0) {
                 return response()->json($scb, 200);
             } else {
                 return response()->json([], 204);
             }
         } catch (\Exception $e) {
-            return response()->json($e, 500);
+            return response()->json($e->getMessage(), 500);
         }
     }
 
@@ -130,7 +182,7 @@ class SchoolController extends Controller
     {
         try {
             return School::where([
-                ['name',"!=",'-']
+                ['name', "!=", '-']
             ])->get();
         } catch (\Exception $e) {
             return response()->json($e, 500);

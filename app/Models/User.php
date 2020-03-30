@@ -11,6 +11,7 @@ class User extends Model
     {
         return $this->belongsTo(School::class, "school_id", "id");
     }
+ 
 
     public function examgroupuser()
     {
@@ -31,10 +32,26 @@ class User extends Model
     {
         return $this->belongsTo(Branch::class, "branch_id", "id");
     }
-    public function examgroups(){
-        return $this->belongsToMany(ExamGroup::class, "examgroup_user");
+    // public function userexamgroups(){
+    //     return $this->belongsToMany(examgroup::class, "examgroup_user");
+    // }
+    // public function examgroup(){
+    //     return $this->belongsToMany(ExamGroup::class, "examgroup_user");
+    // }
+    public function examgroups()
+    {
+        return $this->belongsToMany(ExamGroup::class,
+            "examgroup_user",
+            "user_id",
+            "exam_group_id")->with("contents");
+    }
+    public function contents(){
+        return $this->belongsToMany(ExamGroup::class,
+        "exam_contents",
+        "user_id",
+        "exam_group_id");
     }
     public function examcontents(){
-        return $this->hasMany(ExamContent::class);
+        return $this->hasMany(ExamContent::class, "user_id", "id")->with(["question", "option", "exam_group"]);
     }
 }

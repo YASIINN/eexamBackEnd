@@ -28,7 +28,10 @@ Route::get("scblists", "SchoolClassBranchPivotController@index");
 
 //exam
 Route::post("examcreate", "ExamController@store");
+Route::post("examupdate", "ExamController@storeUpdate");
 Route::post("exams", "ExamController@getExams");
+Route::post("getexam", "ExamController@getExam");
+Route::delete("/delexam/{id}", "ExamController@destroy");
 Route::post("exampartialcreate", "ExamPartialController@store");
 
 
@@ -42,6 +45,14 @@ Route::delete("delexamgroupfile/{id}", "ExamGroupController@destroy");
 Route::post("examstudents", "ExamController@getExamStudents");
 
 Route::post("createexamusergroup", "ExamgroupUserController@store");
+Route::post("delexamusergroups", "ExamgroupUserController@remove");
+
+
+Route::post("createdatfile", "ExamFileController@createDatFile");
+Route::post("getexamdatfiles", "ExamFileController@getExamDatFiles");
+Route::post("downexamdatfiles", "ExamFileController@downExamDatFiles");
+Route::post("removedatfile", "ExamFileController@removeDatFile");
+
 
 //exam
 
@@ -105,7 +116,7 @@ Route::put("/persons/{id}", "UserController@updatepersons");
 Route::delete("/persons/{id}", "UserController@deleteperson");
 Route::post("/addperson", "UserController@addpersons");
 Route::post("/student", "UserController@store");
-Route::get("/student", "UserController@index");
+Route::post("/getstudent", "UserController@index");
 Route::delete("/student/{id}", "UserController@destroy");
 Route::put("/student/{id}", "UserController@update");
 

@@ -30,13 +30,14 @@ class FileController extends Controller
         return File::all();
     }
     public function saveExamFile(Request $request){
-        $valid = Validator::make($request->all(), [
-            'file' => 'mimes:pdf|required|max:20000',
-        ]);
-        if ($valid->fails()) {
-            return response()->json(['message' => $valid->errors()], 200);
-        }
+      
         try {
+            $valid = Validator::make($request->all(), [
+                'file' => 'mimes:pdf|required|max:500000',
+            ]);
+            if ($valid->fails()) {
+                return response()->json(['message' => $valid->errors()], 200);
+            }
             $path = $request->file('file')->store(
                 'public/exams'
             );

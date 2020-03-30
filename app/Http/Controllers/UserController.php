@@ -198,15 +198,26 @@ class UserController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            return User::with(['school', 'class', 'branch'])->where(
-                [
-                    ['status', '=', 0],
-                    ['type', '=', 0],
-                ]
-            )->latest()->paginate(10);
+            if ($request->fullname != "") {
+                return User::with(['school', 'class', 'branch'])->where(
+                    [
+                        ["fullname", "like", '%' . $request->fullname . '%'],
+                        ['status', '=', 0],
+                        ['type', '=', 0],
+                    ]
+                )->latest()->paginate(10);
+            } else {
+                return User::with(['school', 'class', 'branch'])->where(
+                    [
+                        ['status', '=', 0],
+                        ['type', '=', 0],
+                    ]
+                )->latest()->paginate(10);
+            }
+
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
         }

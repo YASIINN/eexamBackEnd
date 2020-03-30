@@ -8,7 +8,7 @@ class School extends Model
 {
     public function clases()
     {
-        return $this->belongsToMany(Clas::class, "school_class_branch_pivots", "school_id", "class_id");
+        return $this->belongsToMany(Clas::class, "school_class_branch_pivots", "school_id", "class_id")->with("branches");
     }
 
     public function user()
