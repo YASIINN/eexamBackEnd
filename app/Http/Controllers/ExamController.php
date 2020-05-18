@@ -314,8 +314,10 @@ class ExamController extends Controller
         if ($today && $todayEnd) {
             $today = Carbon::now();
             $hour = $today->format("H:i:s");
-            return response()->json(['time' => $hour], 200);
+            $day = $today->format("d-m-Y");
+            return response()->json(['time' => $hour,'date'=>$day], 200);
         }
+
     }
 
     public function getStudentExam(Request $request)

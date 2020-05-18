@@ -119,6 +119,7 @@ Route::post("/student", "UserController@store");
 Route::post("/getstudent", "UserController@index");
 Route::delete("/student/{id}", "UserController@destroy");
 Route::put("/student/{id}", "UserController@update");
+Route::post("/getcbstudent", "UserController@getUserCB");
 
 Route::post("/login", "UserController@login");
 /* Yasin */

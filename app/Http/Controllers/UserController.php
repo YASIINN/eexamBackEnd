@@ -155,6 +155,26 @@ class UserController extends Controller
             return response()->json($e->getMessage(), 500);
         }
     }
+    public function getUserCB(Request $request)
+    {
+        try {
+
+            return User::with(['school', 'class', 'branch'])->where(
+                [
+                    ["class_id", "=", $request->clasid],
+                    ["branch_id", "=", $request->branchid],
+                    ['status', '=', 0],
+                    ['type', '=', 0],
+                ]
+            )
+                ->latest()->paginate(10);
+
+
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
+    }
+
 
     public
     function addpersons(Request $request)
